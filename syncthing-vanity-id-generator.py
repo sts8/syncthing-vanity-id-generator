@@ -96,21 +96,30 @@ def write_key_and_cert_to_disk(syncthing_id, key, cert):
         f.write(cert.public_bytes(serialization.Encoding.PEM))
 
 
-iterations = 0
-seconds_passed = 0
+total_iterations = 0
+total_seconds_passed = 0
+current_iterations = 0
+print_every_n_seconds = 3
 
 
 def print_stats_loop():
-    global iterations, seconds_passed
-    seconds_passed += 10
-    print("Total iterations: " + str(iterations) + " Speed: " + str(iterations / seconds_passed) + "/s")
-    threading.Timer(10, print_stats_loop).start()
+    global total_iterations, total_seconds_passed, current_iterations, print_every_n_seconds
+
+    total_iterations += current_iterations
+    total_seconds_passed += print_every_n_seconds
+
+    print("Total iterations: " + str(total_iterations)+"\t\t"
+          + "Current Speed: " + str(current_iterations // print_every_n_seconds) + "/s\t\t"
+          + "AVG Speed: " + str(total_iterations // total_seconds_passed) + "/s")
+
+    current_iterations = 0
+    threading.Timer(print_every_n_seconds, print_stats_loop).start()
 
 
 def main():
-    global iterations
+    global current_iterations, print_every_n_seconds
 
-    threading.Timer(10, print_stats_loop).start()
+    threading.Timer(print_every_n_seconds, print_stats_loop).start()
 
     while True:
         key, cert = create_key_and_cert()
@@ -131,7 +140,7 @@ def main():
             print(syncthing_id)
             write_key_and_cert_to_disk(syncthing_id, key, cert)
 
-        iterations += 1
+        current_iterations += 1
 
 
 if __name__ == '__main__':
