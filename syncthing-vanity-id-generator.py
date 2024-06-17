@@ -124,9 +124,9 @@ def main():
     while True:
         key, cert = create_key_and_cert()
         syncthing_id = calculate_syncthing_id(cert)
-        visible_part_in_gui = syncthing_id[0:6]
+        visible_part_in_gui = syncthing_id[0:7]
 
-        # Matching against the first 6 characters of the Syncthing ID!
+        # Matching against the first block of the Syncthing ID!
 
         # regex_pattern = r"(.)\1{5}"  # 6 repeating characters
         # regex_pattern = r"(.)\1{4}"  # 5 repeating characters
